@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {},
+	"extensions": {
+		"recommendations": [
+			"visualstudiotoolsforunity.vstuc",
+			"unity.unity-debug",
+			"ms-dotnettools.csharp"
+		]
+	}
+}
