@@ -17,7 +17,13 @@ public class BowlingBall : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         startPosition = transform.position;
-        gameManager = FindObjectOfType<GameManager>();
+        gameManager = FindAnyObjectByType<GameManager>();
+
+        // Make the aim arrow a child of the bowling ball if it's not already
+        if (aimArrow != null && aimArrow.parent != transform)
+        {
+            aimArrow.SetParent(transform, true);  // 'true' preserves world position
+        }
 
         // Disable physics until thrown
         rb.isKinematic = true;
@@ -88,7 +94,7 @@ public class BowlingBall : MonoBehaviour
     {
         isRolling = false;
         rb.isKinematic = true;
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         transform.position = startPosition;
 

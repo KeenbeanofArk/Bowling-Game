@@ -11,5 +11,10 @@
 			"unity.unity-debug",
 			"ms-dotnettools.csharp"
 		]
+	},
+	"unity": {
+		"recommendedPackages": [
+			"com.unity.ugui"
+		]
 	}
 }

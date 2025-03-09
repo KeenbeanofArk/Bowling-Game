@@ -7,8 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public BowlingBall bowlingBall;
     public Transform pinParent;  // Parent object containing all pins
-    public Text scoreText;
-    public Text frameText;
+    public UnityEngine.UI.Text scoreText;
+    public UnityEngine.UI.Text frameText;
 
     private List<BowlingPin> pins = new List<BowlingPin>();
     private int currentFrame = 1;
@@ -17,8 +17,21 @@ public class GameManager : MonoBehaviour
     private int[] rollScores = new int[21]; // Max 21 rolls in a game (10 frames, with 2 rolls each + potential bonus in 10th)
     private int rollIndex = 0;
 
+    [SerializeField] private PinSetupHelper pinSetupHelper;
+
+    private bool uiInitialized = false;
+
     void Start()
     {
+        // Set full screen mode at startup
+        Screen.fullScreen = true;
+
+        // Setup pins if we have a helper
+        if (pinSetupHelper != null)
+        {
+            pinSetupHelper.SetupPins();
+        }
+
         // Find all pins in the pin parent
         foreach (Transform child in pinParent)
         {
@@ -26,6 +39,34 @@ public class GameManager : MonoBehaviour
             if (pin != null)
                 pins.Add(pin);
         }
+
+        // Initialize UI elements if not assigned
+        if (scoreText == null || frameText == null)
+        {
+            Debug.LogWarning("UI Text elements not assigned. Attempting to find them in scene.");
+            Canvas canvas = FindAnyObjectByType<Canvas>();
+            if (canvas != null)
+            {
+                if (scoreText == null)
+                    scoreText = canvas.transform.Find("ScoreText")?.GetComponent<Text>();
+
+                if (frameText == null)
+                    frameText = canvas.transform.Find("FrameText")?.GetComponent<Text>();
+            }
+        }
+
+        uiInitialized = (scoreText != null && frameText != null);
+        if (!uiInitialized)
+        {
+            Debug.LogError("Failed to initialize UI. Score and frame will not be displayed.");
+        }
+
+        // Reset all scores
+        for (int i = 0; i < rollScores.Length; i++)
+            rollScores[i] = 0;
+
+        for (int i = 0; i < frameScores.Length; i++)
+            frameScores[i] = 0;
 
         UpdateUI();
     }
@@ -165,10 +206,24 @@ public class GameManager : MonoBehaviour
 
     void UpdateUI()
     {
+        if (!uiInitialized) return;
+
+        // Debug information
+        Debug.Log("Updating UI - Frame: " + currentFrame + ", Roll: " + currentRoll +
+                 ", Score: " + (currentFrame > 1 ? frameScores[currentFrame - 2] : 0));
+
         if (scoreText != null)
-            scoreText.text = "Score: " + (currentFrame > 1 ? frameScores[currentFrame - 2].ToString() : "0");
+        {
+            string scoreString = "Score: " + (currentFrame > 1 ? frameScores[currentFrame - 2].ToString() : "0");
+            scoreText.text = scoreString;
+            Debug.Log("Setting score text: " + scoreString);
+        }
 
         if (frameText != null)
-            frameText.text = "Frame: " + currentFrame + " Roll: " + currentRoll;
+        {
+            string frameString = "Frame: " + currentFrame + " Roll: " + currentRoll;
+            frameText.text = frameString;
+            Debug.Log("Setting frame text: " + frameString);
+        }
     }
 }

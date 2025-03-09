@@ -7,8 +7,9 @@ A 3D bowling game with 4 lanes, physics-based ball and pin mechanics, and proper
 1. Install Unity 2021.3 LTS or newer
 2. Open Unity Hub and click "Add" to add this project folder
 3. Open the project in Unity
-4. Open the main scene from `Assets/Scenes/MainScene.unity`
-5. Press Play to test the game
+4. Create a new scene (File > New Scene) if no scene exists, or open an existing scene from `Assets/Scenes/`
+5. Set up your bowling alley by adding the required prefabs to the scene
+6. Press Play to test the game
 
 ## Game Controls
 
@@ -19,7 +20,7 @@ A 3D bowling game with 4 lanes, physics-based ball and pin mechanics, and proper
 
 ## Project Structure
 
-- `Assets/Scenes`: Contains the main game scene
+- `Assets/Scenes`: Contains game scenes
 - `Assets/Scripts`: All C# scripts for game mechanics
 - `Assets/Prefabs`: Reusable game objects (pins, ball, lane)
 - `Assets/Models`: 3D models for the bowling alley

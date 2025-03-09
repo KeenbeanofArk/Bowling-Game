@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class BowlingPin : MonoBehaviour
 {
@@ -35,7 +36,7 @@ public class BowlingPin : MonoBehaviour
         // Reset position and physics state
         transform.position = startPosition;
         transform.rotation = startRotation;
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         isFallen = false;
     }
@@ -45,15 +46,36 @@ public class BowlingPin : MonoBehaviour
         // First deactivate physics
         rb.isKinematic = true;
 
-        // Animate back to start position (this would normally use a proper animation)
-        LeanTween.move(gameObject, startPosition, 0.5f)
-            .setEaseInOutQuad();
-        LeanTween.rotate(gameObject, startRotation.eulerAngles, 0.5f)
-            .setEaseInOutQuad()
-            .setOnComplete(() =>
-            {
-                rb.isKinematic = false;
-                isFallen = false;
-            });
+        // Start animation coroutine
+        StartCoroutine(AnimateResetCoroutine());
+    }
+
+    private IEnumerator AnimateResetCoroutine()
+    {
+        float duration = 0.5f;
+        float elapsed = 0f;
+        Vector3 startPos = transform.position;
+        Quaternion startRot = transform.rotation;
+
+        while (elapsed < duration)
+        {
+            float t = elapsed / duration;
+            // Smooth step interpolation for more natural movement
+            float smoothT = t * t * (3f - 2f * t);
+
+            transform.position = Vector3.Lerp(startPos, startPosition, smoothT);
+            transform.rotation = Quaternion.Slerp(startRot, startRotation, smoothT);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // Ensure we're exactly at the target position/rotation
+        transform.position = startPosition;
+        transform.rotation = startRotation;
+
+        // Re-enable physics after animation completes
+        rb.isKinematic = false;
+        isFallen = false;
     }
 }
